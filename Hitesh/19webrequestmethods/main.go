@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
 func main() {
 	fmt.Println("welcome to web request types")
-	PerformPostjsonRequest()
+	PerformPostformjsonRequest()
 	//PerformGetRequest()
 }
 
@@ -42,6 +43,26 @@ func PerformPostjsonRequest() {
 
 	response, _ := http.Post(url, "application/json", requestbody)
 
+	defer response.Body.Close()
+
+	var responseString strings.Builder
+	content, _ := ioutil.ReadAll(response.Body)
+	bytelen, _ := responseString.Write(content)
+	fmt.Println(bytelen)
+	fmt.Println(responseString.String())
+
+}
+func PerformPostformjsonRequest() {
+	const myurl = "http://localhost:8000/postform"
+
+	data := url.Values{}
+
+	data.Add("firstname", "abinsh")
+
+	response, err := http.PostForm(myurl, data)
+	if err != nil {
+		panic(err)
+	}
 	defer response.Body.Close()
 
 	var responseString strings.Builder
